@@ -7,3 +7,5 @@
 * `easy`与`normal`仅有4则运算符，`hard`与`lunatic`则加入了乘方与整除运算。
 
 反馈bug请前往Issues。
+
+![image](https://user-images.githubusercontent.com/88281489/171681407-1adb309c-d64b-4f80-86ee-b628c84d4e0c.png)
