@@ -196,6 +196,7 @@ void MainWindow::help()
 {
     QString rule = QString("You should use all 4 numbers to calculate out 24.\n"
                            "'^' means pow, and '//' means divide then floor the result.\n"
+                           "'<--' button can push result number into register.\n"
                            "Decimal or negative numbers is available.\n"
                            "Enjoy yourself!");
     QMessageBox::about(this,QString("help: 24points game"),rule);
