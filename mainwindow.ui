@@ -329,7 +329,7 @@
    </property>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string>operation</string>
+     <string>options</string>
     </property>
     <widget class="QMenu" name="menudifficulty">
      <property name="title">
@@ -343,6 +343,7 @@
     <addaction name="actionnew_game"/>
     <addaction name="actionhelp"/>
     <addaction name="menudifficulty"/>
+    <addaction name="actioncheat"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -375,6 +376,11 @@
   <action name="actionnew_game">
    <property name="text">
     <string>new game</string>
+   </property>
+  </action>
+  <action name="actioncheat">
+   <property name="text">
+    <string>cheat</string>
    </property>
   </action>
  </widget>

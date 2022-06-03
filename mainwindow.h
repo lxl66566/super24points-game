@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include <QPushButton>
-
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -20,12 +19,14 @@ public:
     void update_expression();
     void number_clicked(QPushButton * button);
     void activate_buttons();
-    void caculate(float x);
+    float caculate(float e,float x,int o);
     void transfer_number();
     void clear();
     void update_operator_show();
-    bool victory_pd();
+    bool victory_judge();
     void help();
+    bool victory_is_possible();
+//    QString operator_char_map(int);
 //    void get_operation(QPushButton *button);
 
 private:
@@ -34,6 +35,8 @@ private:
     int valid_operators_num = 4;
     int range[2];
     float expression = INT_MAX;
+    int begin_with_number[4];
+    QVector<QString> correct;
     QPushButton * numbers[5];
     QPushButton * operators[6];
     QAction * difficultes[4];

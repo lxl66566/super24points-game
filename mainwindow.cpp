@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QTime>
 #include <QMessageBox>
+#include <algorithm>
 
 int randint(int,int);
 MainWindow::MainWindow(QWidget *parent)
@@ -10,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     this->setWindowTitle("24pointsgame made by |x|");
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
     numbers[0] = ui->num1;
     numbers[1] = ui->num2;
     numbers[2] = ui->num3;
@@ -46,25 +48,32 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->clear,&QPushButton::clicked,this,&MainWindow::clear);
     connect(ui->actionnew_game,&QAction::triggered,this,&MainWindow::newgame);
     connect(ui->actionhelp,&QAction::triggered,this,&MainWindow::help);
+    connect(ui->actioncheat,&QAction::triggered,this,[=]()
+    {
+        QMessageBox::about(this,QString("cheat"),*correct.begin());
+    });
     newgame();
 }
 
 void MainWindow::newgame()
 {
-    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
     range[1] = 10;
     if(difficulty % 2 == 0)
         range[0] = -10;
     else range[0] = 1;
     update_valid_operator();
-    expression = INT_MAX;
-    operation = 0;
-    activate_buttons();
-    update_expression();
+    clear();
 
+    do
+    {
+        for (int i = 0;i < 4;++i) {
+            begin_with_number[i] = randint(range[0],range[1]);
+        }
+    }
+    while (!victory_is_possible());
     for(int i = 0;i < 4;++i)
     {
-        numbers[i]->setText(QString::number(randint(range[0],range[1])));
+        numbers[i]->setText(QString::number(begin_with_number[i]));
     }
 }
 
@@ -73,11 +82,11 @@ void MainWindow::number_clicked(QPushButton *button)
     if(button->text().isEmpty()) return;
     if (expression == INT_MAX)
     {
-        expression = button->text().toInt();
+        expression = button->text().toFloat();
     }
     else if(operation)
     {
-        caculate(button->text().toFloat());
+        expression = caculate(expression,button->text().toFloat(),operation);
         operation = 0;
         update_operator_show();
     }
@@ -87,7 +96,7 @@ void MainWindow::number_clicked(QPushButton *button)
     if (button == numbers[4])
         button->setText(QString());
 
-    if(victory_pd())
+    if(victory_judge())
     {
         QMessageBox::about(this,QString(),QString("YOU WIN!!"));
         return;
@@ -103,16 +112,16 @@ void MainWindow::transfer_number()
     update_expression();
 }
 
-void MainWindow::caculate(float x)
+float MainWindow::caculate(float e,float x,int o)
 {
-    switch (operation) {
-        case 1:expression += x;break;
-        case 2:expression -= x;break;
-        case 3:expression *= x;break;
-        case 4:expression /= x;break;
-        case 5:expression = powf(expression,x);break;
-        case 6:expression = (int)expression / (int) x;break;
-        default:break;
+    switch (o) {
+        case 1:return e + x;
+        case 2:return e - x;
+        case 3:return e * x;
+        case 4:return x ? e / x : INT_MAX;
+        case 5:return powf(e,x);
+        case 6:return x ? floor(e / x) : INT_MAX;
+        default:return INT_MAX;
     }
 }
 
@@ -179,9 +188,10 @@ void MainWindow::clear()
     activate_buttons();
     update_expression();
     numbers[4]->setText(QString());
+    ui->operator_show->setText(QString());
 }
 
-bool MainWindow::victory_pd()
+bool MainWindow::victory_judge()
 {
     if(expression != 24.0) return false;
     for (int i = 0;i < 5;++i) {
@@ -190,6 +200,44 @@ bool MainWindow::victory_pd()
         }
     }
     return true;
+}
+
+bool MainWindow::victory_is_possible()
+{
+    int num[4];
+    for (int i = 0;i < 4; ++i) num[i] = begin_with_number[i];
+    std::sort(num,num + 4);
+    do
+    {
+        for (int o1 = 1; o1 <= valid_operators_num;++o1)
+            for (int o2 = 1; o2 <= valid_operators_num;++o2)
+                for (int o3 = 1; o3 <= valid_operators_num;++o3)
+                {
+                    if (caculate(caculate(caculate(num[0],num[1],o1),num[2],o2),num[3],o3) == 24.0)
+                    {
+                        correct.clear();
+                        correct.squeeze();
+                        correct.push_back(
+                                QString("((%1 %2 %3) %4 %5) %6 %7").arg(num[0]).arg(operators[o1 - 1]->text()).arg(num[1])
+                                .arg(operators[o2 - 1]->text()).arg(num[2]).arg(operators[o3 - 1]->text()).arg(num[3])
+                                );
+                        return true;
+                    }
+                    if (caculate(caculate(num[0],num[1],o1),caculate(num[2],num[3],o2),o3) == 24.0)
+                    {
+                        correct.clear();
+                        correct.squeeze();
+                        correct.push_back(
+                                    QString("(%1 %2 %3) %4 (%5 %6 %7)").arg(num[0]).arg(operators[o1 - 1]->text()).arg(num[1])
+                                .arg(operators[o3 - 1]->text()).arg(num[2]).arg(operators[o2 - 1]->text()).arg(num[3])
+                                );
+                        return true;
+                    }
+                }
+
+    }
+    while(std::next_permutation(num , num + 4));
+    return false;
 }
 
 void MainWindow::help()
