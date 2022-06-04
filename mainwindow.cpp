@@ -40,6 +40,9 @@ MainWindow::MainWindow(QWidget *parent)
     for (int i = 0;i < 4 ;++i)
     {
         connect(difficultes[i],&QAction::triggered,this,[=](){
+            for (int j = 0;j < 4;++j)
+                difficultes[j]->setChecked(false);
+            difficultes[i]->setChecked(true);
             difficulty = i + 1;
             newgame();
         });
@@ -50,7 +53,26 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionhelp,&QAction::triggered,this,&MainWindow::help);
     connect(ui->actioncheat,&QAction::triggered,this,[=]()
     {
-        QMessageBox::about(this,QString("cheat"),*correct.begin());
+        QString answer = QString();
+        int temp = 0;
+        for (QVector<QString>::iterator i = correct.begin();i != correct.end();++i,++temp)
+        {
+            if (!(temp % 2))
+            {
+                answer += QString("%1").arg(*i,-30);
+            }
+            else
+            {
+                answer += QString("%1").arg(*i,20);
+                answer += QString("\n");
+            }
+        }
+        QMessageBox::about(this,QString("cheat"),answer);
+    });
+    connect(ui->actionshow_max_cheat,&QAction::triggered,this,[=](){
+        show_max_cheet = not show_max_cheet;
+        ui->actionshow_max_cheat->setChecked(show_max_cheet);
+        victory_is_possible();
     });
     newgame();
 }
@@ -75,6 +97,7 @@ void MainWindow::newgame()
     {
         numbers[i]->setText(QString::number(begin_with_number[i]));
     }
+    ui->actionshow_max_cheat->setChecked(show_max_cheet);
 }
 
 void MainWindow::number_clicked(QPushButton *button)
@@ -204,6 +227,7 @@ bool MainWindow::victory_judge()
 
 bool MainWindow::victory_is_possible()
 {
+    bool flag = false;
     int num[4];
     for (int i = 0;i < 4; ++i) num[i] = begin_with_number[i];
     std::sort(num,num + 4);
@@ -215,29 +239,37 @@ bool MainWindow::victory_is_possible()
                 {
                     if (caculate(caculate(caculate(num[0],num[1],o1),num[2],o2),num[3],o3) == 24.0)
                     {
-                        correct.clear();
-                        correct.squeeze();
+                        if (!flag){
+                            flag = true;
+                            correct.clear();
+                            correct.squeeze();
+                        }
                         correct.push_back(
                                 QString("((%1 %2 %3) %4 %5) %6 %7").arg(num[0]).arg(operators[o1 - 1]->text()).arg(num[1])
                                 .arg(operators[o2 - 1]->text()).arg(num[2]).arg(operators[o3 - 1]->text()).arg(num[3])
                                 );
-                        return true;
+                        if (!show_max_cheet)
+                            return flag;
                     }
                     if (caculate(caculate(num[0],num[1],o1),caculate(num[2],num[3],o2),o3) == 24.0)
                     {
-                        correct.clear();
-                        correct.squeeze();
+                        if (!flag){
+                            flag = true;
+                            correct.clear();
+                            correct.squeeze();
+                        }
                         correct.push_back(
                                     QString("(%1 %2 %3) %4 (%5 %6 %7)").arg(num[0]).arg(operators[o1 - 1]->text()).arg(num[1])
                                 .arg(operators[o3 - 1]->text()).arg(num[2]).arg(operators[o2 - 1]->text()).arg(num[3])
                                 );
-                        return true;
+                        if (!show_max_cheet)
+                            return flag;
                     }
                 }
 
     }
     while(std::next_permutation(num , num + 4));
-    return false;
+    return flag;
 }
 
 void MainWindow::help()
@@ -245,6 +277,7 @@ void MainWindow::help()
     QString rule = QString("You should use all 4 numbers to calculate out 24.\n"
                            "'^' means pow, and '//' means divide then floor the result.\n"
                            "'<--' button can push result number into register.\n"
+                           "'show max cheat' mode could show every possible answers in cheat.\n"
                            "Decimal or negative numbers is available.\n"
                            "Enjoy yourself!");
     QMessageBox::about(this,QString("help: 24points game"),rule);

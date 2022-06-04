@@ -344,6 +344,7 @@
     <addaction name="actionhelp"/>
     <addaction name="menudifficulty"/>
     <addaction name="actioncheat"/>
+    <addaction name="actionshow_max_cheat"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -354,21 +355,36 @@
    </property>
   </action>
   <action name="actioneasy">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>easy</string>
    </property>
   </action>
   <action name="actionnormal">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>normal</string>
    </property>
   </action>
   <action name="actionhard">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>hard</string>
    </property>
   </action>
   <action name="actionlunatic">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>lunatic</string>
    </property>
@@ -381,6 +397,19 @@
   <action name="actioncheat">
    <property name="text">
     <string>cheat</string>
+   </property>
+  </action>
+  <action name="actiondifficulty">
+   <property name="text">
+    <string>difficulty</string>
+   </property>
+  </action>
+  <action name="actionshow_max_cheat">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>show max cheat</string>
    </property>
   </action>
  </widget>

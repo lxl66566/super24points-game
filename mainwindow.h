@@ -26,8 +26,6 @@ public:
     bool victory_judge();
     void help();
     bool victory_is_possible();
-//    QString operator_char_map(int);
-//    void get_operation(QPushButton *button);
 
 private:
     Ui::MainWindow *ui;
@@ -41,7 +39,7 @@ private:
     QPushButton * operators[6];
     QAction * difficultes[4];
     int operation = 0;// 1 plus 2 minus 3 ... 6 multidivide
-
+    bool show_max_cheet = false;
 
 };
 #endif // MAINWINDOW_H
