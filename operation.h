@@ -13,16 +13,18 @@ class operation
 {
 private:
     operations op;
-    std::function<i32(i32,i32)> func;
     QPushButton *button;
     bool activated = false;
 public:
+    std::function<i32(i32,i32)> func;
     operation(operations,std::function<i32(i32,i32)>,QPushButton *);
     static QString op_string(operations);
     QString get_op_string();
     operations get_operation() const;
+    QPushButton* get_button();
     bool is_activated();
     void set_activated(bool);
+    void deactivated();
 };
 
 #endif // OPERATION_H

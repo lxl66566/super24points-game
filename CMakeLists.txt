@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(super24points VERSION 0.1 LANGUAGES CXX)
+project(super24points VERSION 2.0.0 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
@@ -23,13 +23,18 @@ set(PROJECT_SOURCES
         operation.cpp
         calculator.h
         calculator.cpp
+        static.qrc
 )
 
+#set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/ico.rc")
+#    qt_add_executable(ico main.cpp )
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(super24points
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+#        ${app_icon_resource_windows}
     )
+
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET super24points APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)

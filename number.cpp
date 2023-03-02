@@ -16,15 +16,20 @@ QString number::get_string_num()
     return QString::number(num);
 }
 
+QPushButton *number::get_button()
+{
+    return button;
+}
+
 void number::clear()    // recover
 {
-    button->setCheckable(true);
+    button->setDisabled(false);
     button->setText(this->get_string_num());
 }
 
 void number::use()
 {
-    button->setCheckable(false);
+    button->setDisabled(true);
     button->setText(QString());
 }
 

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/static">
+        <file>win.ico</file>
+        <file>logo.ico</file>
+    </qresource>
+</RCC>

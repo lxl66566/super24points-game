@@ -45,6 +45,11 @@ operations operation::get_operation() const
     return op;
 }
 
+QPushButton* operation::get_button()
+{
+    return button;
+}
+
 bool operation::is_activated()
 {
     return activated;
@@ -53,4 +58,13 @@ bool operation::is_activated()
 void operation::set_activated(bool temp)
 {
     activated = temp;
+    if (temp)
+        button->show();
+    else button->hide();
+}
+
+void operation::deactivated()   // no used
+{
+    activated = false;
+    button->hide();
 }

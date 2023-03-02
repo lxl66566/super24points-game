@@ -14,6 +14,7 @@ public:
     number(i32 i,QPushButton *b);
     i32 get_num();
     QString get_string_num();
+    QPushButton * get_button();
     void clear();
     void use();
     void transfer(QPushButton*);
