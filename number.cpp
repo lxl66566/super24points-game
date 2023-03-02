@@ -1,9 +1,9 @@
 
 #include "number.h"
 
-number::number(i32 i, QPushButton *b) : num(i) , bottom(b)
+number::number(i32 i, QPushButton *b) : num(i) , button(b)
 {
-
+    clear();
 }
 
 i32 number::get_num()
@@ -16,12 +16,21 @@ QString number::get_string_num()
     return QString::number(num);
 }
 
-void number::clear()
+void number::clear()    // recover
 {
-    bottom->setCheckable(true);
+    button->setCheckable(true);
+    button->setText(this->get_string_num());
 }
 
 void number::use()
 {
-    bottom->setCheckable(false);
+    button->setCheckable(false);
+    button->setText(QString());
+}
+
+void number::transfer(QPushButton *b)   // useless
+{
+    use();
+    button = b;
+    clear();
 }

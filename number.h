@@ -8,7 +8,7 @@ class number
 {
 private:
     i32 num;
-    QPushButton *bottom;
+    QPushButton *button;
 
 public:
     number(i32 i,QPushButton *b);
@@ -16,6 +16,7 @@ public:
     QString get_string_num();
     void clear();
     void use();
+    void transfer(QPushButton*);
 };
 
 #endif // NUMBER_H

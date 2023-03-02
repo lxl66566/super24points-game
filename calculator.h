@@ -9,6 +9,7 @@ class calculator
 public:
     calculator();
     static QString calculate(std::vector<int> num);
+
 };
 
 #endif // CALCULATOR_H
