@@ -1,6 +1,4 @@
 # super24points
 
 to do:
-可行性检验
-f64 的引入
-zero division 改图标
+* bug: lunatic 难度，故意打出 error 窗口，点击 close，最后点击的数字按钮无法恢复正常。

@@ -23,6 +23,8 @@ set(PROJECT_SOURCES
         operation.cpp
         calculator.h
         calculator.cpp
+        pop_up_window.h
+        pop_up_window.cpp
         static.qrc
 )
 

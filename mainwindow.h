@@ -5,16 +5,16 @@
 #include <QMainWindow>
 #include <QRandomGenerator>
 #include <QMessageBox>
+#include <QPixmap>
 #include "number.h"
 #include "operation.h"
 #include "calculator.h"
+#include "pop_up_window.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-using i32 = int;
-using f64 = double;
 enum difficulties{
     easy,normal,hard,lunatic
 };
@@ -49,11 +49,13 @@ private:
     std::unordered_map<difficulties,QAction*> map_difficulty_actions;
     std::unordered_map<operations,operation> map_all_operation;
     QString cheat_info;
-    std::optional<i32> expression;
+    std::optional<f64> expression;
     std::optional<operation> symbol;
     std::optional<number> register_;
-    QMessageBox box_win;
-    QAbstractButton *box_win_ok,*box_win_next;
+    std::unique_ptr<pop_up_window> window_win,window_error;
+    calculator calculator_;
 };
+
+
 
 #endif // MAINWINDOW_H
