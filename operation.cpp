@@ -62,6 +62,31 @@ QString operation::get_op_string()
     return op_string(this->op);
 }
 
+i32 operation::get_op_rank()
+{
+    switch(op)
+    {
+    case add:
+    case minus:
+        return 1;
+    case times:
+    case divide:
+        return 2;
+    case divide_exactly:
+        return 3;
+    case and_:
+        return 4;
+    case or_:
+        return 5;
+    case xor_:
+        return 6;
+    case power:
+        return 7;
+    default:
+        return 8;
+    }
+}
+
 operations operation::get_operation() const
 {
     return op;
@@ -92,6 +117,21 @@ bool operation::accept_f64_calculation()
     }
 }
 
+bool operation::accept_exchange()
+{
+    switch(op)
+    {
+    case add:
+    case times:
+    case xor_:
+    case and_:
+    case or_:
+        return true;
+    default:
+        return false;
+    }
+}
+
 void operation::set_activated(bool temp)
 {
     activated = temp;
@@ -104,4 +144,9 @@ void operation::deactivated()   // no used
 {
     activated = false;
     button->hide();
+}
+
+bool operation::operator==(const operation & temp) const
+{
+    return op == temp.op;
 }

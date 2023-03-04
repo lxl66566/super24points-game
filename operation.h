@@ -17,19 +17,22 @@ private:
     QPushButton *button;
     bool activated = false;
 public:
-    std::function<f64(f64,f64)> func;   // without a type check
+    operation(operations,std::function<f64(f64,f64)>,QPushButton *);
+    std::function<f64(f64,f64)> func;                   // without a type check
     std::variant<f64,QString> dynamic_func(f64,f64);    // type check, return QString err if invalid
     std::variant<f64,QString> dynamic_func(std::variant<f64,QString>,f64);
     // type check, return QString err if invalid
-    operation(operations,std::function<f64(f64,f64)>,QPushButton *);
     static QString op_string(operations);
     QString get_op_string();
+    i32 get_op_rank();
     operations get_operation() const;
     QPushButton* get_button();
     bool is_activated();
     bool accept_f64_calculation();
+    bool accept_exchange();
     void set_activated(bool);
     void deactivated();
+    bool operator==(operation const &)const;
 };
 
 #endif // OPERATION_H

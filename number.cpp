@@ -35,12 +35,14 @@ void number::clear()    // recover
 {
     button->setDisabled(false);
     button->setText(this->get_string_num());
+//    qDebug() << "number: " << num << "has been cleared;";
 }
 
 void number::use()
 {
     button->setDisabled(true);
     button->setText(QString());
+//    qDebug() << "number: " << num << "has been used;";
 }
 
 void number::transfer(QPushButton *b)   // useless

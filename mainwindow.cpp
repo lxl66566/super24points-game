@@ -1,4 +1,4 @@
-// #include <QTime>
+ #include <QFont>
 #include <QDebug>
 #include <ranges>
 // #include <stdexcept>
@@ -45,11 +45,17 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionhelp,&QAction::triggered,this,[this](){
         QMessageBox::about(this,QString("help: %1points game").arg(TARGET_NUMBER),QString(
 R""(You should use all 4 numbers to calculate out %1.
-'^' means pow, and '//' means divide then floor the result.
-'<--' button can push result number into register.
-'show max cheat' mode could show every possible answers in cheat.
-Decimal or negative numbers is available.
-Enjoy yourself!)""
+easy: numbers from 1 to 10
+normal: numbers from -10 to 10 (except 0)
+hard: '^' means power and '//' means divide and fix to 0
+lunatic: '^','&','|' means xor,and,or.
+Enjoy yourself!
+
+需要用给定数字与符号算出%1点
+easy: 数字从 1 到 10
+normal: 数字扩展到 -10 到 10 （0 除外）
+hard: 新增 指数运算^ 整除运算// （向 0 取整）
+lunatic: 新增 按位异或^ 按位与& 按位或|)""
 ).arg(TARGET_NUMBER));
     });
     connect(ui->actioneasy,&QAction::triggered,this,[this](){
@@ -69,7 +75,12 @@ Enjoy yourself!)""
         new_game();
     });
     connect(ui->actioncheat,&QAction::triggered,this,[this](){
-        QMessageBox::about(this,QString("cheat"),calculator_.get_ans());
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("cheat");
+        msgBox.setText(calculator_.get_ans());
+        msgBox.setFont(QFont("Consolas"));
+        msgBox.setWindowIcon(windowIcon());
+        msgBox.exec();
     });
     connect(ui->clear,&QPushButton::clicked,this,&MainWindow::clear);
     for (auto &i : all_operation)
@@ -113,7 +124,6 @@ void MainWindow::new_game()
     numbers.push_back(number(generate_numbers_by_difficulty(),ui->num4));
     qDebug() << "numbers set.";
     for (auto &i : numbers){
-        qDebug() << "numberinfo: " + i.get_string_num() + i.get_button()->text();
         i.get_button()->connect(i.get_button(),&QPushButton::clicked,this,[&i,this](){
             move_into_expression(i);
         });
@@ -235,12 +245,6 @@ bool MainWindow::move_into_expression(number& num)
     {
         auto temp = symbol.value().dynamic_func(expression.value(),num.get_num());
         try{
-//            if (num.get_num() == 0
-//                && (symbol.value().get_operation() == operations::divide
-//                    || symbol.value().get_operation() == operations::divide_exactly))
-//                throw QString("Division by zero condition!");
-//            if ((!num.is_i32() || !number::is_i32(expression.value())) && !symbol.value().accept_f64_calculation())
-//                throw QString("Cannot do this operation to a float number!");
             expression = std::get<f64>(temp);
             symbol = std::nullopt;
         } catch (std::bad_variant_access&) {
@@ -248,6 +252,7 @@ bool MainWindow::move_into_expression(number& num)
             window_error->set_text(err);
             window_error->pop_up();
             clear();
+            return false;
         }
     }
     else if (expression.has_value())
@@ -262,7 +267,8 @@ bool MainWindow::move_into_expression(number& num)
 
 bool MainWindow::change_operation(operations op, operation temp)
 {
-    auto it = std::find_if(all_operation.begin(),all_operation.end(),[&op](const operation &i){return i.get_operation() == op;});
+    auto it = std::find_if(all_operation.begin(),all_operation.end(),
+        [&op](const operation &i){return i.get_operation() == op;});
     if (it == all_operation.end()) return false;
     *it = temp;
     return true;
