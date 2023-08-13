@@ -1,7 +1,5 @@
 #include "calculator.h"
-#include <QDebug>
 #include <algorithm>
-
 
 calculator::calculator() {}
 

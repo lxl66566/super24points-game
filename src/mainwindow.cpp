@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
-#include <QDebug>
 #include <QFont>
 #include <QString>
+#include <fmt/core.h>
 #include <ranges>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
       {operations::power,
        operation(
            operations::power, [](f64 x, f64 y) { return pow(x, y); }, ui->b5)});
-  qDebug() << "operations initialized.";
+  fmt::println("operations initialized.");
   map_difficulty_actions = decltype(map_difficulty_actions){
       {difficulties::easy, ui->actioneasy},
       {difficulties::normal, ui->actionnormal},
@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
       {difficulties::lunatic, ui->actionlunatic},
   };
   messagebox_init();
-  qDebug() << "messagebox set.";
+  fmt::println("messagebox set.");
   connect(ui->actionnew_game, &QAction::triggered, this, &MainWindow::new_game);
   connect(ui->actionhelp, &QAction::triggered, this, [this]() {
     QMessageBox::about(
@@ -122,7 +122,7 @@ lunatic: 新增 按位异或^ 按位与& 按位或|)"")
     register_ = std::nullopt;
     victory_check();
   });
-  qDebug() << "connect completed.";
+  fmt::println("connect completed.");
   new_game();
 }
 
@@ -139,24 +139,24 @@ void MainWindow::new_game() {
     i.get_button()->disconnect();
   }
   numbers.clear();
-  qDebug() << "old numbers clear.";
+  fmt::println("old numbers clear.");
   numbers.push_back(number(generate_numbers_by_difficulty(), ui->num1));
   numbers.push_back(number(generate_numbers_by_difficulty(), ui->num2));
   numbers.push_back(number(generate_numbers_by_difficulty(), ui->num3));
   numbers.push_back(number(generate_numbers_by_difficulty(), ui->num4));
-  qDebug() << "numbers set.";
+  fmt::println("numbers set.");
   for (auto &i : numbers) {
     i.get_button()->connect(i.get_button(), &QPushButton::clicked, this,
                             [&i, this]() { move_into_expression(i); });
   }
-  qDebug() << "numbers connected complete.";
+  fmt::println("numbers connected complete.");
   deal_operators_by_difficulty();
-  qDebug() << "hide & show operators completed.";
-  qDebug() << "entered calculator";
+  fmt::println("hide & show operators completed.");
+  fmt::println("entered calculator");
   calculator_ = calculator(numbers, all_operation);
-  qDebug() << "finished calculator";
+  fmt::println("finished calculator");
   if (calculator_.get_ans().isEmpty()) {
-    qDebug() << "there's no answer, regenerating..";
+    fmt::println("there's no answer, regenerating..");
     new_game();
     return;
   }

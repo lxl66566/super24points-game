@@ -30,13 +30,4 @@ public:
   static bool is_i32(double i);
 };
 
-// class number_double : public number
-//{
-// private:
-//     f64 num;
-// public:
-//     number_double(f64 num, QPushButton* button);
-//     f64 get_num();
-// };
-
 #endif // NUMBER_H

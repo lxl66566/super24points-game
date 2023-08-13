@@ -1,4 +1,3 @@
-
 #include "operation.h"
 #include "number.h"
 

@@ -1,10 +1,9 @@
-
 #ifndef POP_UP_WINDOW_H
 #define POP_UP_WINDOW_H
 #include <QAbstractButton>
 #include <QMessageBox>
+#include <QPixmap>
 #include <QPushButton>
-
 
 class pop_up_window : public QMessageBox {
   Q_OBJECT

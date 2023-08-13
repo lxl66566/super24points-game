@@ -18,13 +18,11 @@ void number::clear() // recover
 {
   button->setDisabled(false);
   button->setText(this->get_string_num());
-  //    qDebug() << "number: " << num << "has been cleared;";
 }
 
 void number::use() {
   button->setDisabled(true);
   button->setText(QString());
-  //    qDebug() << "number: " << num << "has been used;";
 }
 
 void number::transfer(QPushButton *b) // useless
@@ -45,8 +43,3 @@ bool number::is_i32(number i) { return number::is_i32(i.get_num()); }
 bool number::is_i32(double i) {
   return i == static_cast<f64>(static_cast<i32>(i));
 }
-
-// number_double::number_double(f64 num, QPushButton * b) : num(num)
-//{
-//     button = b;
-// }

@@ -1,9 +1,7 @@
-
 #ifndef OPERATION_H
 #define OPERATION_H
 #include <QPushButton>
 #include <functional>
-
 
 using i32 = int;
 using f64 = double;
