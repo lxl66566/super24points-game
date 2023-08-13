@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
   ui->setupUi(this);
   setWindowTitle(QString("super%1points").arg(TARGET_NUMBER));
   setWindowIcon(QIcon(":/static/logo.ico"));
+  setCentralWidget(ui->centralwidget);
 
   all_operation = std::vector<operation>{
       operation(
@@ -44,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent)
       operation(
           operations::divide_exactly,
           [](f64 x, f64 y) {
-            return y == 0 ? INT_MAX : static_cast<int>(x / y);
+            return y == 0 ? INT_MAX : static_cast<i32>(x / y);
           },
           ui->b8)};
   for (auto &i : all_operation) {
@@ -106,6 +107,7 @@ lunatic: 新增 按位异或^ 按位与& 按位或|)"")
     msgBox.setWindowIcon(windowIcon());
     msgBox.exec();
   });
+
   connect(ui->clear, &QPushButton::clicked, this, &MainWindow::clear);
   for (auto &i : all_operation) {
     connect(i.get_button(), &QPushButton::clicked, this, [&]() {
@@ -118,9 +120,10 @@ lunatic: 新增 按位异或^ 按位与& 按位或|)"")
   connect(ui->transfer, &QPushButton::clicked, this,
           &MainWindow::move_into_register);
   connect(ui->temp, &QPushButton::clicked, this, [this]() {
-    move_into_expression(register_.value());
-    register_ = std::nullopt;
-    victory_check();
+    if (move_into_expression(register_.value())) {
+      register_ = std::nullopt;
+      victory_check();
+    }
   });
   fmt::println("connect completed.");
   new_game();
@@ -157,8 +160,7 @@ void MainWindow::new_game() {
   fmt::println("finished calculator");
   if (calculator_.get_ans().isEmpty()) {
     fmt::println("there's no answer, regenerating..");
-    new_game();
-    return;
+    return new_game();
   }
   print();
 }
@@ -167,8 +169,6 @@ void MainWindow::clear() {
   if (register_.has_value())
     register_->use();
   std::ranges::for_each(numbers, [](number &i) { i.clear(); });
-  //    for (auto &i : numbers) i.clear();  // i suspended that
-  //    std::ranges::for_each has bugs with my program...
   register_ = std::nullopt;
   expression = std::nullopt;
   symbol = std::nullopt;
@@ -193,33 +193,42 @@ void MainWindow::deal_operators_by_difficulty() {
   switch (difficulty) {
   case hard:
     for (auto &i : all_operation) {
-      if (i.get_operation() == operations::xor_ ||
-          i.get_operation() == operations::and_ ||
-          i.get_operation() == operations::or_)
+      switch (i.get_operation()) {
+      case operations::xor_:
+      case operations::and_:
+      case operations::or_:
         i.set_activated(false);
-      else
+        break;
+      default:
         i.set_activated(true);
+      }
     }
     break;
   case lunatic:
     for (auto &i : all_operation) {
-      if (i.get_operation() == operations::power ||
-          i.get_operation() == operations::divide_exactly)
+      switch (i.get_operation()) {
+      case operations::power:
+      case operations::divide_exactly:
         i.set_activated(false);
-      else
+        break;
+      default:
         i.set_activated(true);
+      }
     }
     break;
   default:
     for (auto &i : all_operation) {
-      if (i.get_operation() == operations::power ||
-          i.get_operation() == operations::divide_exactly ||
-          i.get_operation() == operations::xor_ ||
-          i.get_operation() == operations::and_ ||
-          i.get_operation() == operations::or_)
+      switch (i.get_operation()) {
+      case operations::xor_:
+      case operations::and_:
+      case operations::or_:
+      case operations::power:
+      case operations::divide_exactly:
         i.set_activated(false);
-      else
+        break;
+      default:
         i.set_activated(true);
+      }
     }
     break;
   }
@@ -255,7 +264,7 @@ void MainWindow::print() {
 }
 
 bool MainWindow::move_into_register() {
-  if (!expression.has_value())
+  if (!expression.has_value() || register_.has_value())
     return false;
   if (symbol.has_value())
     symbol = std::nullopt;
@@ -266,8 +275,7 @@ bool MainWindow::move_into_register() {
 }
 
 bool MainWindow::move_into_expression(number &num) {
-  if (symbol.has_value()) // symbol has value means expression has value
-  {
+  if (symbol.has_value() && expression.has_value()) {
     auto temp = symbol.value().dynamic_func(expression.value(), num.get_num());
     try {
       expression = std::get<f64>(temp);
@@ -315,6 +323,7 @@ void MainWindow::victory_check() {
 void MainWindow::messagebox_init() {
   window_win = std::make_unique<pop_up_window>(
       this, "Congratulations", "YOU WIN!", QPixmap(":/static/win.ico"));
+  // button text was set default
   connect(window_win.get(), &pop_up_window::Next, this,
           [this]() { new_game(); });
   window_error = std::make_unique<pop_up_window>(this, "error",

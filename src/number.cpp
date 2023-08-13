@@ -6,6 +6,8 @@ number::number(i32 i, QPushButton *b) : num(static_cast<f64>(i)), button(b) {
   clear();
 }
 
+number::~number() {}
+
 number::number(f64 i, QPushButton *b) : num(i), button(b) { clear(); }
 
 f64 number::get_num() { return num; }

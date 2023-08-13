@@ -18,6 +18,7 @@ public:
   number();
   number(i32 i, QPushButton *b);
   number(f64 i, QPushButton *b);
+  ~number();
   f64 get_num();
   QString get_string_num();
   QPushButton *get_button();

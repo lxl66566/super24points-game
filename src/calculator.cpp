@@ -1,5 +1,4 @@
 #include "calculator.h"
-#include <algorithm>
 
 calculator::calculator() {}
 
@@ -95,7 +94,7 @@ QString calculator::calculate() {
       }
   size_t temp = 0;
   QString output;
-  for (auto &i : ans) {
+  for (auto const &i : ans) {
     output += i;
     ++temp;
     if (temp % 2 == 1)
