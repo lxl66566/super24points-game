@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QSettings>
 #include <QStyleFactory>
+#include <QTextStream>
 
 void set_dark() {
   qApp->setStyle(QStyleFactory::create("Fusion"));
