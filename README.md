@@ -13,11 +13,12 @@
 ![ex](https://cdn.staticaly.com/gh/lxl66566/super24points-game/Qt6/static/ui_2.png)
 ![ex](https://cdn.staticaly.com/gh/lxl66566/super24points-game/Qt6/static/ui_cheat.png)
 ## build from source
-### compile on windows
-Changing the build system to xmake is not so easy, but it worth.([read more](https://absx.pages.dev/coding/Cpp.html#配置-qt-开发环境)) That's my first Qt project using xmake.
-```sh
-xmake f --qt=D:\software\QtSDK\6.6.0    # use your sdk dir
-xmake && xmake r
-```
-### run
+> Changing the build system to xmake is not so easy, but it worth.([read more](https://absx.pages.dev/coding/Cpp.html#配置-qt-开发环境)) That's my first Qt project using xmake.
+
+1. edit `xmake.lua` and set toolchains
+2. build
+    ```sh
+    xmake && xmake r
+    ```
+### run(Windows)
 add *Qt sdk* and *sdk bin* to your PATH.
