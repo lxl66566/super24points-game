@@ -1,5 +1,5 @@
 set_project("super24points")
-set_version("2.1.1")
+set_version("2.1.2")
 set_languages("cxx20")
 set_encodings("utf-8")
 add_rules("mode.debug", "mode.release", "mode.minsizerel")

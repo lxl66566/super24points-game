@@ -5,6 +5,7 @@ build
 .cache
 CMakeFiles
 expected.hpp
+compile_commands.json
 
 cmake_install.cmake
 CMakeCache.txt

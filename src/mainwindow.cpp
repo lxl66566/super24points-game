@@ -2,8 +2,11 @@
 #include "./ui_mainwindow.h"
 #include <QFont>
 #include <QString>
+#include <algorithm>
 #include <fmt/core.h>
+#include <functional>
 #include <ranges>
+#include <utility>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -111,17 +114,17 @@ lunatic: 新增 按位异或^ 按位与& 按位或|)"")
   connect(ui->clear, &QPushButton::clicked, this, &MainWindow::clear);
   for (auto &i : all_operation) {
     connect(i.get_button(), &QPushButton::clicked, this, [&]() {
-      if (!expression.has_value())
-        return;
-      symbol = i;
-      print();
+      if (expression) {
+        symbol = i;
+        print();
+      }
     });
   }
   connect(ui->transfer, &QPushButton::clicked, this,
           &MainWindow::move_into_register);
   connect(ui->temp, &QPushButton::clicked, this, [this]() {
-    if (move_into_expression(register_.value())) {
-      register_ = std::nullopt;
+    if (register_ && move_into_expression(register_.value())) {
+      register_.reset();
       victory_check();
     }
   });
@@ -131,16 +134,26 @@ lunatic: 新增 按位异或^ 按位与& 按位或|)"")
 
 MainWindow::~MainWindow() { delete ui; }
 
+// noused
+difficulties MainWindow::map_string_to_difficulty(const std::string &str) {
+  if (str == "easy")
+    return easy;
+  if (str == "normal")
+    return normal;
+  if (str == "hard")
+    return hard;
+  return lunatic;
+}
 void MainWindow::new_game() {
-  if (register_.has_value())
-    register_->use();
-  register_ = std::nullopt;
-  expression = std::nullopt;
-  symbol = std::nullopt;
-  for (auto &i : numbers) {
+  if (register_)
+    register_.value().use();
+  register_.reset();
+  expression.reset();
+  symbol.reset();
+  std::ranges::for_each(numbers, [](number &i) {
     i.clear();
     i.get_button()->disconnect();
-  }
+  });
   numbers.clear();
   fmt::println("old numbers clear.");
   numbers.push_back(number(generate_numbers_by_difficulty(), ui->num1));
@@ -166,12 +179,12 @@ void MainWindow::new_game() {
 }
 
 void MainWindow::clear() {
-  if (register_.has_value())
-    register_->use();
+  if (register_)
+    register_.value().use();
   std::ranges::for_each(numbers, [](number &i) { i.clear(); });
-  register_ = std::nullopt;
-  expression = std::nullopt;
-  symbol = std::nullopt;
+  register_.reset();
+  expression.reset();
+  symbol.reset();
   print();
 }
 
@@ -247,39 +260,33 @@ void MainWindow::change_difficulty(difficulties temp) {
     break;
   default:
     change_operation(operations::power, map_all_operation.at(operations::xor_));
-    break;
   }
   deal_operators_by_difficulty();
 }
 
 void MainWindow::print() {
-  if (expression.has_value())
-    ui->expression->setText(QString::number(expression.value()));
-  else
-    ui->expression->setText(QString());
-  if (symbol.has_value())
-    ui->operator_show->setText(symbol.value().get_op_string());
-  else
-    ui->operator_show->setText(QString());
+  ui->expression->setText(expression ? QString::number(expression.value())
+                                     : QString());
+  ui->operator_show->setText(symbol ? symbol.value().get_op_string()
+                                    : QString());
 }
 
 bool MainWindow::move_into_register() {
-  if (!expression.has_value() || register_.has_value())
+  if (!expression || register_)
     return false;
-  if (symbol.has_value())
-    symbol = std::nullopt;
+  symbol.reset();
   register_ = number(expression.value(), ui->temp);
-  expression = std::nullopt;
+  expression.reset();
   print();
   return true;
 }
 
 bool MainWindow::move_into_expression(number &num) {
-  if (symbol.has_value() && expression.has_value()) {
+  if (symbol && expression) {
     auto temp = symbol.value().dynamic_func(expression.value(), num.get_num());
     try {
       expression = std::get<f64>(temp);
-      symbol = std::nullopt;
+      symbol.reset();
     } catch (std::bad_variant_access &) {
       QString err = std::get<QString>(temp);
       window_error->set_text(err);
@@ -287,7 +294,7 @@ bool MainWindow::move_into_expression(number &num) {
       clear();
       return false;
     }
-  } else if (expression.has_value())
+  } else if (expression)
     return false;
   else
     expression = num.get_num();
@@ -308,10 +315,9 @@ bool MainWindow::change_operation(operations op, operation temp) {
 }
 
 bool MainWindow::is_win() {
-  return expression.has_value() && expression.value() == TARGET_NUMBER &&
+  return expression && expression.value() == TARGET_NUMBER &&
          !ui->num1->isEnabled() && !ui->num2->isEnabled() &&
-         !ui->num3->isEnabled() && !ui->num4->isEnabled() &&
-         !register_.has_value();
+         !ui->num3->isEnabled() && !ui->num4->isEnabled() && !register_;
 }
 
 void MainWindow::victory_check() {

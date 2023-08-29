@@ -10,6 +10,7 @@
 #include <QPixmap>
 #include <QRandomGenerator>
 #include <optional>
+#include <string>
 #include <unordered_map>
 
 QT_BEGIN_NAMESPACE
@@ -26,6 +27,7 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
 public:
+  static difficulties map_string_to_difficulty(const std::string &); // noused
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
   void new_game();
@@ -36,7 +38,6 @@ public:
   void print();
   bool move_into_register();
   bool move_into_expression(number &);
-  //    std::vector<operation>::iterator& find_operation_index(operations);
   bool change_operation(operations op, operation temp);
   bool is_win();
   void victory_check();
