@@ -73,8 +73,6 @@ Thumbs.db
 
 *.res
 
-*.rc
-
 /.qmake.cache
 
 /.qmake.stash

@@ -23,6 +23,7 @@ target("main")
   add_files("src/*.h")
   add_files("src/*.ui")
   add_files("static/static.qrc")
+  add_files("static/logo.rc")
   add_files("lib/dark/darkstyle.qrc")
   add_packages("lib/expected.hpp")
 
