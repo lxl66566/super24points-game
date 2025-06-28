@@ -1,5 +1,8 @@
 # super24points
 
+> [!CAUTION]
+> 该 Qt 项目已经停止维护。请前往 [super24points](https://github.com/lxl66566/super24points) 游玩 super24points 的最新纯前端版本。
+
 超级 24 点，在普通 24 点的基础上扩展了**负数，指数，整除，位运算**。
 
 - easy: 四则运算
